@@ -2,7 +2,7 @@ import React from 'react'
 import cn from 'classnames'
 import propTypes from 'prop-types'
 
-import style from './index.less'
+import style from './index.module.less'
 import { transform } from '../../../unit/const'
 
 export default class Button extends React.Component {
@@ -42,3 +42,4 @@ Button.propTypes = {
   arrow: propTypes.string,
   active: propTypes.bool.isRequired,
 }
+
