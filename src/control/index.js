@@ -17,7 +17,6 @@ let keydownActive
 const boardKeys = Object.keys(keyboard).map(e => parseInt(e, 10))
 
 const keyDown = e => {
-  console.warn('keydown-e:', e)
   if (e.metaKey === true || boardKeys.indexOf(e.keyCode) === -1) {
     return
   }
