@@ -1,4 +1,4 @@
-import React from 'react'
+import { useEffect, useState, memo } from 'react'
 import propTypes from 'prop-types'
 
 import style from './index.module.less'
@@ -20,23 +20,20 @@ const empty = [
   [0, 0, 0, 0],
 ]
 
-export default class Next extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      block: empty,
-    }
-  }
-  UNSAFE_componentWillMount() {
-    this.build(this.props.data)
-  }
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    this.build(nextProps.data)
-  }
-  shouldComponentUpdate(nextProps) {
-    return nextProps.data !== this.props.data
-  }
-  build(type) {
+const Next = props => {
+  const [state, setState] = useState({
+    block: empty,
+  })
+
+  useEffect(() => {
+    build(props.data)
+  }, [])
+
+  useEffect(() => {
+    build(props.data)
+  }, [props])
+
+  function build(type) {
     const shape = blockShape[type]
     const block = empty.map(e => [...e])
     shape.forEach((m, k1) => {
@@ -46,24 +43,26 @@ export default class Next extends React.Component {
         }
       })
     })
-    this.setState({ block })
+    setState({ block })
   }
-  render() {
-    return (
-      <div className={style.next}>
-        {this.state.block.map((arr, k1) => (
-          <div key={k1}>
-            {arr.map((e, k2) => (
-              <b className={e ? 'c' : ''} key={k2} />
-            ))}
-          </div>
-        ))}
-      </div>
-    )
-  }
+  return (
+    <div className={style.next}>
+      {state.block.map((arr, k1) => (
+        <div key={k1}>
+          {arr.map((e, k2) => (
+            <b className={e ? 'c' : ''} key={k2} />
+          ))}
+        </div>
+      ))}
+    </div>
+  )
 }
 
 Next.propTypes = {
   data: propTypes.string,
 }
+
+export default memo(Next, function (pre, next) {
+  return pre.data !== next.data
+})
 

@@ -54,8 +54,7 @@ const Keyboard = props => {
     )
 
     Object.keys(todo).forEach(key => {
-      console.warn('todo-key:', key, refMap[`dom_${key}`])
-      refMap[`dom_${key}`].dom.addEventListener(
+      refMap[`dom_${key}`].addEventListener(
         'mousedown',
         () => {
           if (touchEventCatch[key] === true) {
@@ -66,7 +65,7 @@ const Keyboard = props => {
         },
         true
       )
-      refMap[`dom_${key}`].dom.addEventListener(
+      refMap[`dom_${key}`].addEventListener(
         'mouseup',
         () => {
           if (touchEventCatch[key] === true) {
@@ -78,7 +77,7 @@ const Keyboard = props => {
         },
         true
       )
-      refMap[`dom_${key}`].dom.addEventListener(
+      refMap[`dom_${key}`].addEventListener(
         'mouseout',
         () => {
           if (mouseDownEventCatch[key] === true) {
@@ -87,7 +86,7 @@ const Keyboard = props => {
         },
         true
       )
-      refMap[`dom_${key}`].dom.addEventListener(
+      refMap[`dom_${key}`].addEventListener(
         'touchstart',
         () => {
           touchEventCatch[key] = true
@@ -95,7 +94,7 @@ const Keyboard = props => {
         },
         true
       )
-      refMap[`dom_${key}`].dom.addEventListener(
+      refMap[`dom_${key}`].addEventListener(
         'touchend',
         () => {
           todo[key].up(store)
