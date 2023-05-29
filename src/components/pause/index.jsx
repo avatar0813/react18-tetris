@@ -1,62 +1,45 @@
-import React from 'react'
+import { useState, useEffect, useRef } from 'react'
 import cn from 'classnames'
 import propTypes from 'prop-types'
 
 import style from './index.module.less'
 
-export default class Pause extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      // 控制显示状态
-      showPause: false,
-    }
-  }
-  componentDidMount() {
-    this.setShake(this.props.data)
-  }
-  UNSAFE_componentWillReceiveProps({ data }) {
-    this.setShake(data)
-  }
-  shouldComponentUpdate({ data }) {
-    if (data) {
-      // 如果暂停了, 不会有太多的dispatch, 考虑到闪烁效果, 直接返回true
-      return true
-    }
-    return data !== this.props.data
-  }
-  setShake(bool) {
-    // 根据props显示闪烁或停止闪烁
-    if (bool && !Pause.timeout) {
-      Pause.timeout = setInterval(() => {
-        this.setState({
-          showPause: !this.state.showPause,
-        })
-      }, 250)
-    }
-    if (!bool && Pause.timeout) {
-      clearInterval(Pause.timeout)
-      this.setState({
-        showPause: false,
-      })
-      Pause.timeout = null
-    }
-  }
-  render() {
-    return (
-      <div
-        className={cn({
-          bg: true,
-          [style.pause]: true,
-          [style.c]: this.state.showPause,
-        })}
-      />
-    )
-  }
-}
+const Pause = props => {
+  const [timeout, setTime] = useState(null)
+  const [showPause, setPause] = useState(false)
+  const saveCallBack = useRef(null)
 
-Pause.statics = {
-  timeout: null,
+  useEffect(() => {
+    saveCallBack.current = setShake
+  })
+
+  useEffect(() => {
+    saveCallBack.current(props.data)
+  }, [props])
+
+  const setShake = bool => {
+    // 根据props显示闪烁或停止闪烁
+    if (bool && !timeout) {
+      const time = setInterval(() => {
+        setPause(n => !n)
+      }, 400)
+      setTime(time)
+    }
+    if (!bool && timeout) {
+      clearInterval(timeout)
+      setPause(false)
+      setTime(null)
+    }
+  }
+  return (
+    <div
+      className={cn({
+        bg: true,
+        [style.pause]: true,
+        [style.c]: showPause,
+      })}
+    />
+  )
 }
 
 Pause.propTypes = {
@@ -66,4 +49,6 @@ Pause.propTypes = {
 Pause.defaultProps = {
   data: false,
 }
+
+export default Pause
 
