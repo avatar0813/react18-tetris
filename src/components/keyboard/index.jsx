@@ -214,6 +214,6 @@ Keyboard.propTypes = {
 }
 
 export default memo(Keyboard, function (pre, { keyboard, filling }) {
-  return !Immutable.is(keyboard, pre.keyboard) || filling !== pre.filling
+  return Immutable.is(keyboard, pre.keyboard) && filling === pre.filling
 })
 

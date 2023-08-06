@@ -1,42 +1,42 @@
 const eventName = {}
 
-const down = o => {
+const down = options => {
   // 键盘、手指按下
   const keys = Object.keys(eventName)
   keys.forEach(i => {
     clearTimeout(eventName[i])
     eventName[i] = null
   })
-  if (!o.callback) {
+  if (!options.callback) {
     return
   }
   const clear = () => {
-    clearTimeout(eventName[o.key])
+    clearTimeout(eventName[options.key])
   }
-  o.callback(clear)
-  if (o.once === true) {
+  options.callback(clear)
+  if (options.once === true) {
     return
   }
-  let begin = o.begin || 100
-  const interval = o.interval || 50
+  let begin = options.begin || 100
+  const interval = options.interval || 50
   const loop = () => {
-    eventName[o.key] = setTimeout(() => {
+    eventName[options.key] = setTimeout(() => {
       begin = null
       loop()
-      o.callback(clear)
+      options.callback(clear)
     }, begin || interval)
   }
   loop()
 }
 
-const up = o => {
+const up = options => {
   // 键盘、手指松开
-  clearTimeout(eventName[o.key])
-  eventName[o.key] = null
-  if (!o.callback) {
+  clearTimeout(eventName[options.key])
+  eventName[options.key] = null
+  if (!options.callback) {
     return
   }
-  o.callback()
+  options.callback()
 }
 
 const clearAll = () => {

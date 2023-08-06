@@ -21,6 +21,6 @@ Music.propTypes = {
 }
 
 export default memo(Music, (pre, next) => {
-  return pre.data !== next.data
+  return pre.data === next.data
 })
 

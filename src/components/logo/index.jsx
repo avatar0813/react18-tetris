@@ -160,6 +160,6 @@ Logo.statics = {
 }
 
 export default memo(Logo, function (pre, next) {
-  return pre.cur !== next.cur || pre.reset !== next.reset || !next.cur
+  return pre.cur === next.cur && pre.reset === next.reset && next.cur
 })
 

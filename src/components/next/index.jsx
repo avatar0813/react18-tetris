@@ -25,9 +25,6 @@ const Next = props => {
     block: empty,
   })
 
-  useEffect(() => {
-    build(props.data)
-  }, [])
 
   useEffect(() => {
     build(props.data)
@@ -63,6 +60,6 @@ Next.propTypes = {
 }
 
 export default memo(Next, function (pre, next) {
-  return pre.data !== next.data
+  return pre.data === next.data
 })
 

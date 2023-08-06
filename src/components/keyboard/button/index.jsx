@@ -35,6 +35,6 @@ Button.propTypes = {
 }
 
 export default memo(Button, function (pre, next) {
-  return pre.active !== next.active
+  return pre.active === next.active
 })
 

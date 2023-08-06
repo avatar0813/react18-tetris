@@ -76,6 +76,6 @@ Point.propTypes = {
 }
 
 export default memo(Point, function (pre, next) {
-  return pre.cur !== next.cur || pre.point !== next.point || pre.max !== next.max || !pre.cur
+  return pre.cur === next.cur && pre.point === next.point && pre.max === next.max && pre.cur
 })
 
