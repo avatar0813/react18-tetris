@@ -1,6 +1,7 @@
 import event from '../../unit/event'
 import states from '../states'
 import actions from '../../actions'
+import { music } from '../../unit/music'
 
 const down = store => {
   store.dispatch(actions.keyboard.pause(true))
@@ -8,6 +9,7 @@ const down = store => {
     key: 'p',
     once: true,
     callback: () => {
+      music.fall()
       const state = store.getState()
       if (state.get('lock')) {
         return
