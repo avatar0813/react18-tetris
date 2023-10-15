@@ -30,7 +30,7 @@
 
 原本组件中的ref也是通过 组件上添加回调的方式添加的 类似：`ref={c => { refMap.dom_down = c }}`, 在之前并没有声明； 在react18中使用`useRef`来声明引用。
 
-在react18 函数式组件中怎么让父组件调用子组建的ref呢？ 由于函数式组件不能向外抛出ref， 讲究一个内部封闭的原则，所以父组件不能直接调用子组件中的ref，但是可以使用[`forwardRef`](https://react.dev/reference/react/forwardRef) 来实现
+在react18 函数式组件中怎么让父组件调用子组件的ref呢？ 由于函数式组件不能向外抛出ref， 讲究一个内部封闭的原则，所以父组件不能直接调用子组件中的ref，但是可以使用[`forwardRef`](https://react.dev/reference/react/forwardRef) 来实现
 注意： 不能动态遍历添加 `ref` ，react禁止这种方式添加，可以声明对象的方式，
 
 ### 替换 useState 时遇到的定时器问题

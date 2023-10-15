@@ -1,7 +1,7 @@
 import { useState, useEffect, memo } from 'react'
 import QRCode from 'qrcode'
 import style from './index.module.less'
-import { transform, i18n, lan } from '../../unit/const'
+import { transform } from '../../unit/const'
 import { isMobile } from '../../unit'
 
 const Guide = () => {
@@ -34,40 +34,6 @@ const Guide = () => {
           <em style={{ [transform]: 'translate(7px,3px)rotate(90deg) scale(1,2)' }} />
         </div>
       </div>
-      <div className={`${style.guide} ${style.left}`}>
-        <p>
-          <a
-            href="https://github.com/chvin/react-tetris"
-            rel="noopener noreferrer"
-            target="_blank"
-            title={i18n.linkTitle[lan]}
-          >{`${i18n.github[lan]}:`}</a>
-          <br />
-          <iframe
-            src="https://ghbtns.com/github-btn.html?user=chvin&repo=react-tetris&type=star&count=true"
-            frameBorder="0"
-            scrolling="0"
-            width="170px"
-            height="20px"
-            style={{ [transform]: 'scale(1.68)', [`${transform}Origin`]: 'center left' }}
-          />
-          <br />
-          <iframe
-            src="https://ghbtns.com/github-btn.html?user=chvin&repo=react-tetris&type=fork&count=true"
-            frameBorder="0"
-            scrolling="0"
-            width="170px"
-            height="20px"
-            style={{ [transform]: 'scale(1.68)', [`${transform}Origin`]: 'center left' }}
-          />
-        </p>
-        <div className={style.space}>SPACE</div>
-      </div>
-      {state.QRCode !== '' ? (
-        <div className={`${style.guide} ${style.qr}`}>
-          <img src={state.QRCode} alt={i18n.QRCode[lan]} />
-        </div>
-      ) : null}
     </div>
   )
 }
