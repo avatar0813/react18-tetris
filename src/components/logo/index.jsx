@@ -5,7 +5,7 @@ import propTypes from 'prop-types'
 import style from './index.module.less'
 import { i18n, lan } from '../../unit/const'
 
-const Logo = props => {
+const LogoBase = props => {
   const [state, setState] = useState({
     style: style.r1,
     display: 'none',
@@ -151,15 +151,16 @@ const Logo = props => {
   )
 }
 
-Logo.propTypes = {
+LogoBase.propTypes = {
   cur: propTypes.bool,
   reset: propTypes.bool.isRequired,
 }
-Logo.statics = {
+LogoBase.statics = {
   timeout: null,
 }
 
-export default memo(Logo, function (pre, next) {
+const Logo = memo(LogoBase, function (pre, next) {
   return pre.cur === next.cur && pre.reset === next.reset && next.cur
 })
 
+export default Logo

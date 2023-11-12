@@ -5,7 +5,8 @@ import propTypes from 'prop-types'
 
 import style from './index.module.less'
 
-import Matrix from '../components/matrix'
+import Matrix from '../components/matrix/index'
+// import Matrix from '../components/matrix/indexOld'
 import Decorate from '../components/decorate'
 import Number from '../components/number'
 import Next from '../components/next'
@@ -27,7 +28,8 @@ function App(props) {
   })
 
   useEffect(() => {
-    window.addEventListener('resize', resize.bind(this), true)
+    console.log('app.props:', props)
+    window.addEventListener('resize', resize, true)
     if (visibilityChangeEvent) {
       // 将页面的焦点变换写入store
       document.addEventListener(
@@ -54,6 +56,9 @@ function App(props) {
       }
     } else {
       states.overStart()
+    }
+    return () => {
+      window.removeEventListener('resize', resize)
     }
   }, [])
 

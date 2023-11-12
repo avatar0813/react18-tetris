@@ -1,5 +1,5 @@
-import React from 'react'
-import immutable, { List } from 'immutable'
+import { useState, useEffect, memo } from 'react'
+import  immutable, { List } from 'immutable'
 import classnames from 'classnames'
 import propTypes from 'prop-types'
 
@@ -10,54 +10,51 @@ import states from '../../control/states'
 
 const t = setTimeout
 
-export default class Matrix extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      clearLines: false,
-      animateColor: 2,
-      isOver: false,
-      overState: null,
-    }
-  }
-  UNSAFE_componentWillReceiveProps(nextProps = {}) {
-    const clears = isClear(nextProps.matrix)
-    const overs = nextProps.reset
-    this.setState({
-      clearLines: clears,
-      isOver: overs,
+
+const Matrix = (props) => {
+
+  const [state, setState] = useState({
+    clearLines: false,
+    animateColor: 2,
+    isOver: false,
+    overState: null,
+  })
+
+  const [matrix, setMatrix] = useState(props.matrix || null)
+
+
+  useEffect(() => {
+    const clears = isClear(props.matrix)
+    const overs = props.reset
+    setState((info) => {
+      return {
+        ...info,
+        clearLines: clears,
+        isOver: overs,
+      }
     })
-    if (clears && !this.state.clearLines) {
-      this.clearAnimate(clears)
+    // 清除动画
+    if (clears && !state.clearLines) {
+      clearAnimate(clears)
     }
-    if (!clears && overs && !this.state.isOver) {
-      this.over(nextProps)
+    if (!clears && overs && !state.isOver) {
+      matrixOver(props)
     }
-  }
-  shouldComponentUpdate(nextProps = {}) {
-    // 使用Immutable 比较两个List 是否相等
-    const props = this.props
-    return (
-      !(
-        immutable.is(nextProps.matrix, props.matrix) &&
-        immutable.is(nextProps.cur && nextProps.cur.shape, props.cur && props.cur.shape) &&
-        immutable.is(nextProps.cur && nextProps.cur.xy, props.cur && props.cur.xy)
-      ) ||
-      this.state.clearLines ||
-      this.state.isOver
-    )
-  }
-  getResult(props = this.props) {
-    const cur = props.cur
+  }, [props])
+
+
+  // 修改 matrix
+  const matrixOver = (curProps) => {
+    const cur = curProps.cur
     const shape = cur && cur.shape
     const xy = cur && cur.xy
 
-    let matrix = props.matrix
-    const clearLines = this.state.clearLines
+    let tempMatrix = curProps.matrix
+    const clearLines = state.clearLines
     if (clearLines) {
-      const animateColor = this.state.animateColor
+      const animateColor = state.animateColor
       clearLines.forEach(index => {
-        matrix = matrix.set(
+        tempMatrix = tempMatrix.set(
           index,
           List([
             animateColor,
@@ -78,7 +75,7 @@ export default class Matrix extends React.Component {
         m.forEach((n, k2) => {
           if (n && xy.get(0) + k1 >= 0) {
             // 竖坐标可以为负
-            let line = matrix.get(xy.get(0) + k1)
+            let line = tempMatrix.get(xy.get(0) + k1)
             let color
             if (line.get(xy.get(1) + k2) === 1 && !clearLines) {
               // 矩阵与方块重合
@@ -87,43 +84,18 @@ export default class Matrix extends React.Component {
               color = 1
             }
             line = line.set(xy.get(1) + k2, color)
-            matrix = matrix.set(xy.get(0) + k1, line)
+            tempMatrix = tempMatrix.set(xy.get(0) + k1, line)
           }
         })
       )
     }
-    return matrix
-  }
-  clearAnimate() {
-    const anima = callback => {
-      t(() => {
-        this.setState({
-          animateColor: 0,
-        })
-        t(() => {
-          this.setState({
-            animateColor: 2,
-          })
-          if (typeof callback === 'function') {
-            callback()
-          }
-        }, 100)
-      }, 100)
-    }
-    anima(() => {
-      anima(() => {
-        anima(() => {
-          t(() => {
-            states.clearLines(this.props.matrix, this.state.clearLines)
-          }, 100)
-        })
-      })
-    })
-  }
-  over(nextProps) {
-    let overState = this.getResult(nextProps)
-    this.setState({
-      overState,
+    setMatrix(() => tempMatrix)
+    let overState = tempMatrix
+    setState(info => {
+      return {
+        ...info,
+        overState,
+      }
     })
 
     const exLine = index => {
@@ -135,8 +107,11 @@ export default class Matrix extends React.Component {
         states.overEnd()
         return
       }
-      this.setState({
-        overState,
+      setState( info =>{
+        return {
+          ...info,
+          overState,
+        }
       })
     }
 
@@ -144,16 +119,44 @@ export default class Matrix extends React.Component {
       t(exLine.bind(null, i), 40 * (i + 1))
     }
   }
-  render() {
-    let matrix
-    if (this.state.isOver) {
-      matrix = this.state.overState
-    } else {
-      matrix = this.getResult()
+
+  // 清空动画
+  const clearAnimate = () => {
+    const anima = callback => {
+      t(() => {
+        setState((info) => {
+          return {
+            ...info,
+            animateColor: 0,
+          }
+        })
+        t(() => {
+          setState( info => {
+            return {
+              ...info,
+              animateColor: 2,
+            }
+          })
+          if (typeof callback === 'function') {
+            callback()
+          }
+        }, 100)
+      }, 100)
     }
-    return (
-      <div className={style.matrix}>
-        {matrix.map((p, k1) => (
+    anima(() => {
+      anima(() => {
+        anima(() => {
+          t(() => {
+            states.clearLines(props.matrix, state.clearLines)
+          }, 100)
+        })
+      })
+    })
+  }
+
+  return (
+    <div className={style.matrix}>
+        {(state.isOver ? state.overState : matrix).map((p, k1) => (
           <p key={k1}>
             {p.map((e, k2) => (
               <b
@@ -167,8 +170,7 @@ export default class Matrix extends React.Component {
           </p>
         ))}
       </div>
-    )
-  }
+  )
 }
 
 Matrix.propTypes = {
@@ -177,3 +179,11 @@ Matrix.propTypes = {
   reset: propTypes.bool.isRequired,
 }
 
+const Component = memo(Matrix, (prev, cur) => {
+  return !(
+    immutable.is(cur.matrix, prev.matrix) &&
+    immutable.is(cur.cur && cur.cur.shape, prev.cur && prev.cur.shape) &&
+    immutable.is(cur.cur && cur.cur.xy, prev.cur && prev.cur.xy)
+  ) || isClear(cur.matrix) || cur.reset
+})
+export default Component
